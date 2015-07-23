@@ -1,0 +1,11 @@
+#  Directions to run the program
+
+1. Run the configure script, passing it your fortran compiler and an
+   argument specifying whether to generate debug flags (off by default)
+   eg:
+	# normal run
+	./configure gfortran
+	# run with debug flags
+	./configure gfortran d
+
+2. Run make to generate the executable

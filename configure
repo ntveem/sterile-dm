@@ -1,0 +1,75 @@
+#!/bin/bash
+# Takes in the compiler used, and edits the makefile accordingly.
+# Usage: ./configure <fortran compiler used> <optional d=debug run>
+# Used this hack because this is too light to justify using automake.
+
+export COMP=$1  # Compiler
+export DEB=$2	# optional flag specifying debug run
+export MAKEIN='.Makefile.in'
+MAKEFILE='Makefile'
+mdir='$(IDIR)'
+odir='obj'
+ldir='lib'
+idir='include'
+
+if [[ -z $COMP ]]; then
+	echo "Usage: ./configure <fortran compiler used> [d=debug run]"
+	echo "Sorry, this isn't a *real* configure script, just something I quickly wrote to change some commands."
+	exit $?
+fi
+
+# create directories if they doen't already exist
+mkdir -p "$odir"
+mkdir -p "$ldir"
+mkdir -p "$idir"
+
+# commands to use in the makefile, depending on the compiler
+if [[ $COMP =~ ^gfortran ]]; then
+	if [[ $DEB =~ ^d ]]; then
+		export DOFLAGS="-g -Wall -fbacktrace"; # debug info
+	       				        # & print trace for debugging
+	else
+		export DOFLAGS="-O3 -ffast-math -funroll-loops -fopenmp";
+	fi
+	export MS="-J$mdir"; # specify module directory to save in
+	export ML="-I$mdir"; # specify module directory to load from
+elif [[ $COMP =~ ^g95 ]]; then
+	if [[ $DEB =~ ^d ]]; then
+		export DOFLAGS="-g -Wall -ftrace=full";
+	else
+		export DOFLAGS="-O3 -ffast-math -funroll-loops";
+	fi
+	export MS="-fmod=$mdir";
+	export ML="-I$mdir"; 
+elif [[ $COMP =~ ^ifort ]]; then
+	if [[ $DEB =~ ^d ]]; then
+		export DOFLAGS="-g -Wall -traceback";
+	else
+		export DOFLAGS="-O3 -fast -funroll-loops -fopenmp";
+	fi
+	export MS="-module $mdir";
+	export ML="-I$mdir";
+elif [[ $COMP =~ ^f95 ]]; then
+	if [[ $DEB =~ ^d ]]; then
+		export DOFLAGS="-g -Wall";
+	else
+		export DOFLAGS="-O3 -fast -fopenmp";
+	fi
+	export MS="-moddir=$mdir";
+	export ML="-M$mdir";
+else 
+	if [[ $DEB =~ ^d ]]; then
+		export DOFLAGS="-g -Wall";
+	else
+		export DOFLAGS="-O3";
+	fi
+	export MS="";
+	export ML="";
+fi
+
+perl -pi.bak -e 's:^(FC\s+=).*:\1$ENV{'COMP'}:g' "$MAKEIN"
+perl -pi.bak -e 's:^(FFLAGS\s+=).*:\1$ENV{'DOFLAGS'}:g' "$MAKEIN"
+perl -pi.bak -e 's:^(MSFLAGS\s+=).*:\1$ENV{'MS'}:g' "$MAKEIN"
+perl -pi.bak -e 's:^(MLFLAGS\s+=).*:\1$ENV{'ML'}:g' "$MAKEIN"
+
+cp "$MAKEIN" "$MAKEFILE"

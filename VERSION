@@ -1,0 +1,25 @@
+!     version 2.0 - added effect of redistribution of an input lepton
+!     asymmetry, and a proper g_* through the quark hadron transition.
+
+!     version hunt1.7 - using a hunting algorithm for omega countours.
+
+!     version 1.7 - uses updated derivs1.7 with softening of scatterers
+!     in transition and some optimizations
+
+!     version 1.62 - full runs, outputting Gamma/H for <p>
+!     version 1.61 - no runs with a halt of run at high temperature
+!     version 1.6 - runs with halt at high T and runs with continuation
+!     of calculation with only cutoff in production
+
+!     version 1.4 - using DVODE for the 2nd order transition
+
+!     version 1.3 - with an actual iterated form of the actual abundance
+!     of scatterers, and an iteration for the thermal potential (vtch)
+!     for the mu and tau lepton abundance evolution
+
+!     version 1.2 - having disconnected runs of the pre-qcd transition,
+!     qcd transition, and post-qcd transition
+
+!     version 1.0 cdmqcd: new version with high resolution gstar
+!     evolution and 1st order QCD transition dynamics included
+
