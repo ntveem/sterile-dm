@@ -3,7 +3,7 @@ README
 ===============================================================================
 Dependencies:
 
-1. fortran 90 and later compiler (tested on gfortran 4.4.7 and g95 0.93)
+1. fortran 90 compiler (tested on gfortran 4.4.7 and g95 0.93)
 
 ===============================================================================
 Compilation instructions:
@@ -70,7 +70,7 @@ consists of three sets of files:
   2. A state file, 'state.dat', which contains the temperature, FRW coordinate 
      time, number of e-folds since the starting temperature, lepton asymmetry 
      and DM closure fraction for all temperatures at which the state is saved 
-     (the variable 'INTFLAG' is provided to output at 100 temperatures in between, 
-     if needed)
+     (the variable 'INTFLAG' is provided to output at NSAVE_MAX logarithmically
+     spaced temperatures, if needed)
   3. A set of snapshot files, one for each line in the state file. They contain 
      the sterile neutrino and anti-neutrino p.s.ds
