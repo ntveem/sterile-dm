@@ -7,10 +7,9 @@ export COMP=$1  # Compiler
 export DEB=$2	# optional flag specifying debug run
 export MAKEIN='.Makefile.in'
 MAKEFILE='Makefile'
-mdir='$(IDIR)'
+mdir='$(ODIR)'
 odir='obj'
 ldir='lib'
-idir='include'
 
 if [[ -z $COMP ]]; then
 	echo "Usage: ./configure <fortran compiler used> [d=debug run]"
@@ -21,7 +20,6 @@ fi
 # create directories if they doen't already exist
 mkdir -p "$odir"
 mkdir -p "$ldir"
-mkdir -p "$idir"
 
 # commands to use in the makefile, depending on the compiler
 if [[ $COMP =~ ^gfortran ]]; then

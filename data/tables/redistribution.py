@@ -13,7 +13,7 @@
 #         NOTES: ---
 #        AUTHOR: Tejaswi N
 #       CREATED: 19-02-2015
-# LAST MODIFIED: Fri Jul  3 12:46:12 2015
+# LAST MODIFIED: Mon 27 Jul 2015 04:46:15 AM PDT
 #      REVISION: ---
 #==============================================================================
 
@@ -33,7 +33,6 @@ def main():
     """docstring for main"""
 
     chiarray = np.loadtxt('ChiTable_alltemp_new.dat', skiprows=1)
-    chiarray_sb = np.loadtxt('ChiTable_Stefan_Boltz.dat', skiprows=1)
 
     # nx8x8 array, where n is the number of temperatures tabulated
     # array relates chemical potentials to conserved quantities, 8 eqs
@@ -122,92 +121,6 @@ def main():
                 )
             )
 
-    coeffarray_sb = np.dstack(
-            (
-                np.c_[
-                    np.array( [ 2.0*pchi(me/x) for x in chiarray_sb[:,0] ] ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    -np.ones( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    -np.array( [ 2.0*pchi(me/x) for x in chiarray_sb[:,0] ] )
-                    ],
-                np.c_[
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.array( [ 2.0*pchi(mmu/x) for x in chiarray_sb[:,0] ] ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    -np.ones( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    -np.array( [ 2.0*pchi(mmu/x) for x in chiarray_sb[:,0] ] )
-                    ],
-                np.c_[
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.array( [ 2.0*pchi(mtau/x) for x in chiarray_sb[:,0] ] ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    -np.ones( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    -np.array( [ 2.0*pchi(mtau/x) for x in chiarray_sb[:,0] ] )
-                    ],
-                np.c_[
-                    np.array( [ pchi(mnue/x) for x in chiarray_sb[:,0] ] ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.ones( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) )
-                    ],
-                np.c_[
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.array( [ pchi(mnumu/x) for x in chiarray_sb[:,0] ] ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.ones( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) )
-                    ],
-                np.c_[
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.array( [ pchi(mnutau/x) for x in chiarray_sb[:,0] ] ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.ones( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) )
-                    ],
-                np.c_[
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    -np.ones( len(chiarray_sb[:,0]) ),
-                    -np.ones( len(chiarray_sb[:,0]) ),
-                    -np.ones( len(chiarray_sb[:,0]) ),
-                    chiarray_sb[:,3],
-                    chiarray_sb[:,2]
-                    ],
-                np.c_[
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    np.zeros( len(chiarray_sb[:,0]) ),
-                    chiarray_sb[:,1],
-                    chiarray_sb[:,3]
-                    ]
-                )
-            )
-
-
     # result matrices for three flavors of lepton asymmetry
     Leresult = np.c_[
             np.ones( len(chiarray[:,0]) ),
@@ -273,75 +186,18 @@ def main():
 
     # derivatives w.r.t e, mu and tau asymmetries
     # each is an nx8 array, where each row is d\mu_\alpha/dL_x
-    #ederivative = np.linalg.solve(coeffarray, Leresult) 
-    #muderivative = np.linalg.solve(coeffarray, Lmuresult) 
-    #tauderivative = np.linalg.solve(coeffarray, Ltauresult)
+    ederivative = np.linalg.solve(coeffarray, Leresult) 
+    muderivative = np.linalg.solve(coeffarray, Lmuresult) 
+    tauderivative = np.linalg.solve(coeffarray, Ltauresult)
 
-    ederivative_sb = np.linalg.solve(coeffarray_sb, Leresult_sb) 
-    muderivative_sb = np.linalg.solve(coeffarray_sb, Lmuresult_sb) 
-    tauderivative_sb = np.linalg.solve(coeffarray_sb, Ltauresult_sb)
+    np.savetxt('dmudLe_new.dat', np.c_[ chiarray[:,0], ederivative  ], fmt='%15.4e', 
+            header='!T (MeV) d\mu_e/dL_e d\mu_\mu/dL_e d\mu_\\tau/dL_e d\mu_{\\nu_e}/dL_e d\mu_{\\nu_\mu}/dL_e d\mu_{\\nu_\\tau}/dL_e d\mu_Q/dL_e d\mu_B/dL_e')
+    np.savetxt('dmudLmu_new.dat', np.c_[ chiarray[:,0], muderivative  ], fmt='%15.4e',
+            header='!T (MeV) d\mu_e/dL_\mu d\mu_\mu/dL_\mu d\mu_\\tau/dL_\mu d\mu_{\\nu_e}/dL_\mu d\mu_{\\nu_\mu}/dL_\mu d\mu_{\\nu_\\tau}/dL_\mu d\mu_Q/dL_\mu d\mu_B/dL_\mu')
+    np.savetxt('dmudLtau_new.dat', np.c_[ chiarray[:,0], tauderivative  ], fmt='%15.4e',
+            header='!T (MeV) d\mu_e/dL_\\tau d\mu_\mu/dL_\\tau d\mu_\\tau/dL_\\tau d\mu_{\\nu_e}/dL_\\tau d\mu_{\\nu_\mu}/dL_\\tau d\mu_{\\nu_\\tau}/dL_\\tau d\mu_Q/dL_\\tau d\mu_B/dL_\\tau')
 
-
-    #fig = plt.figure()
-    #ax = fig.add_subplot(111)
-
-    #ax.set_xscale('Log')
-    #ax.set_yscale('Log')
-    #ax.set_xlabel(r"$T \ [\rm MeV]$")
-    #ax.set_ylabel(r"$\partial \hat{n}_X/\partial \hat{\mathcal{L}}_\mu$")
-
-    #ax.plot( chiarray[:,0], 
-	     #np.array( [ 2.0*pchi(me/x) for x in chiarray[:,0] ] )*muderivative[:,0],
-	     #label=r'$e^-$' )
-    #ax.plot( chiarray[:,0], 
-	     #np.array( [ 2.0*pchi(mmu/x) for x in chiarray[:,0] ] )*muderivative[:,1],
-	     #label=r'$\mu^-$' )
-    #ax.plot( chiarray[:,0], 
-	     #np.array( [ 2.0*pchi(mtau/x) for x in chiarray[:,0] ] )*muderivative[:,2],
-	     #label=r'$\tau^-$' )
-    #ax.plot( chiarray[:,0], 
-	     #np.array( [ pchi(mnue/x) for x in chiarray[:,0] ] )*muderivative[:,3],
-	     #label=r'$\nu_e$' )
-    #ax.plot( chiarray[:,0], 
-	     #np.array( [ pchi(mnumu/x) for x in chiarray[:,0] ] )*muderivative[:,4],
-	     #label=r'$\nu_\mu$' )
-    #ax.plot( chiarray[:,0], 
-	     #np.array( [ pchi(mnutau/x) for x in chiarray[:,0] ] )*muderivative[:,5],
-	     #label=r'$\nu_\tau$' )
-    #ax.plot( chiarray[:,0], 
-	     #chiarray[:,2]*muderivative[:,6] + chiarray[:,3]*muderivative[:,7],
-	     #label=r'$Q$' )
-
-    #plt.legend(frameon=False)
-
-    #plt.savefig('mu_redist.pdf')
-
-    #np.savetxt('dmudLe_new.dat', np.c_[ chiarray[:,0], ederivative  ], fmt='%15.4e', 
-	    #header='!T (MeV) d\mu_e/dL_e d\mu_\mu/dL_e d\mu_\\tau/dL_e d\mu_{\\nu_e}/dL_e d\mu_{\\nu_\mu}/dL_e d\mu_{\\nu_\\tau}/dL_e d\mu_Q/dL_e d\mu_B/dL_e')
-    #np.savetxt('dmudLmu_new.dat', np.c_[ chiarray[:,0], muderivative  ], fmt='%15.4e',
-	    #header='!T (MeV) d\mu_e/dL_\mu d\mu_\mu/dL_\mu d\mu_\\tau/dL_\mu d\mu_{\\nu_e}/dL_\mu d\mu_{\\nu_\mu}/dL_\mu d\mu_{\\nu_\\tau}/dL_\mu d\mu_Q/dL_\mu d\mu_B/dL_\mu')
-    #np.savetxt('dmudLtau_new.dat', np.c_[ chiarray[:,0], tauderivative  ], fmt='%15.4e',
-	    #header='!T (MeV) d\mu_e/dL_\\tau d\mu_\mu/dL_\\tau d\mu_\\tau/dL_\\tau d\mu_{\\nu_e}/dL_\\tau d\mu_{\\nu_\mu}/dL_\\tau d\mu_{\\nu_\\tau}/dL_\\tau d\mu_Q/dL_\\tau d\mu_B/dL_\\tau')
-
-    np.savetxt('dmudLe_new_sb.dat', np.c_[ chiarray_sb[:,0], ederivative_sb  ], fmt='%15.4e', 
-	    header='!T (MeV) d\mu_e/dL_e d\mu_\mu/dL_e d\mu_\\tau/dL_e d\mu_{\\nu_e}/dL_e d\mu_{\\nu_\mu}/dL_e d\mu_{\\nu_\\tau}/dL_e d\mu_Q/dL_e d\mu_B/dL_e')
-    np.savetxt('dmudLmu_new_sb.dat', np.c_[ chiarray_sb[:,0], muderivative_sb  ], fmt='%15.4e',
-	    header='!T (MeV) d\mu_e/dL_\mu d\mu_\mu/dL_\mu d\mu_\\tau/dL_\mu d\mu_{\\nu_e}/dL_\mu d\mu_{\\nu_\mu}/dL_\mu d\mu_{\\nu_\\tau}/dL_\mu d\mu_Q/dL_\mu d\mu_B/dL_\mu')
-    np.savetxt('dmudLtau_new_sb.dat', np.c_[ chiarray_sb[:,0], tauderivative_sb  ], fmt='%15.4e',
-	    header='!T (MeV) d\mu_e/dL_\\tau d\mu_\mu/dL_\\tau d\mu_\\tau/dL_\\tau d\mu_{\\nu_e}/dL_\\tau d\mu_{\\nu_\mu}/dL_\\tau d\mu_{\\nu_\\tau}/dL_\\tau d\mu_Q/dL_\\tau d\mu_B/dL_\\tau')
-
-    
-    #potentials = V(soln.x, pars.T, pars.p, chiq2, chib2, chibq11)
-
-    #return potentials
-
-    #mt = 0.1*np.arange(0,2001)
-
-    #eft = np.array( [ef(0.0,m,1.0) for m in mt] )
-
-    #np.savetxt('Efermi.dat', np.c_[ mt, np.log(eft) ], fmt='%15.4e', header='! m/T  log_e(E_f in units of T^4)')
-
-    
+       
 def pchi(m):
     """This calculates the particle number susceptibility (in units of T^2)
     for a fermi dirac distribution with m (units of T), and degeneracy factor one"""
