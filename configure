@@ -24,10 +24,10 @@ mkdir -p "$ldir"
 # commands to use in the makefile, depending on the compiler
 if [[ $COMP =~ ^gfortran ]]; then
 	if [[ $DEB =~ ^d ]]; then
-		export DOFLAGS="-g -Wall -fbacktrace"; # debug info
+		export DOFLAGS="-g -Wall -fallow-argument-mismatch -fbacktrace"; # debug info
 	       				        # & print trace for debugging
 	else
-		export DOFLAGS="-O3 -ffast-math -funroll-loops -fopenmp";
+		export DOFLAGS="-O3 -ffast-math -fallow-argument-mismatch -funroll-loops -fopenmp";
 	fi
 	export MS="-J$mdir"; # specify module directory to save in
 	export ML="-I$mdir"; # specify module directory to load from
@@ -41,9 +41,9 @@ elif [[ $COMP =~ ^g95 ]]; then
 	export ML="-I$mdir"; 
 elif [[ $COMP =~ ^ifort ]]; then
 	if [[ $DEB =~ ^d ]]; then
-		export DOFLAGS="-g -Wall -traceback";
+		export DOFLAGS="-g -Wall -nogen-interfaces -traceback";
 	else
-		export DOFLAGS="-O3 -fast -funroll-loops -fopenmp";
+		export DOFLAGS="-O3 -fast -nogen-interfaces -funroll-loops -fopenmp";
 	fi
 	export MS="-module $mdir";
 	export ML="-I$mdir";
