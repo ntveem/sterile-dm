@@ -24,7 +24,7 @@ Compilation instructions:
 How to run the program:
 
 Run the program by passing the address of the parameter file to the 
-   executable:
+executable:
         ./sterile-nu <name of param file>
 
 ===============================================================================
