@@ -18,7 +18,7 @@ Compilation instructions:
 
 2. If you have received the code from another person/machine, and are compiling 
    it for the first time, run 'make clean'.
-2. Run 'make' to generate the executable, which is named 'sterile-nu'.
+3. Run 'make' to generate the executable, which is named 'sterile-nu'.
 
 ===============================================================================
 How to run the program:
